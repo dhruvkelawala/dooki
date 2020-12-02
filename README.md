@@ -1,1 +1,5 @@
 # dokidoki
+
+```sh
+make run
+```
