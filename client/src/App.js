@@ -1,7 +1,18 @@
 import logo from './logo.svg';
 import './App.css';
+import { useState, useEffect } from 'react';
 
 function App() {
+  const [word, setWord] = useState('Bye World');
+  const getRoot = async () => {
+    let result = await fetch('/api/');
+    let data = await result.text();
+    setWord(data);
+  };
+  useEffect(()=>{
+    getRoot();
+  },[])
+
   return (
     <div className="App">
       <header className="App-header">
@@ -15,7 +26,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learning React
+          {word}
         </a>
       </header>
     </div>

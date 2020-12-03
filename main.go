@@ -9,7 +9,7 @@ func main() {
 
 	app.Static("/static/", "./client/build/static/")
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/api/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
 
