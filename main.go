@@ -1,17 +1,33 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"fmt"
+	"github.com/gofiber/fiber/v2"
+	"log"
+	"os"
+)
+
+
+func getPort() string {
+	port, ok := os.LookupEnv("PORT")
+	if ok {
+		return fmt.Sprintf(":%s", port)
+	}
+
+	return ":3000"
+}
 
 func main() {
-	app := fiber.New()
+	router:= fiber.New()
 
-	app.Static("/", "./client/build/")
 
-	app.Static("/static/", "./client/build/static/")
+	//Static
+	router.Static("/", "./client/build/")
+	router.Static("/static/", "./client/build/static/")
 
-	app.Get("/api/", func(c *fiber.Ctx) error {
+	router.Get("/api/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
 
-	app.Listen(":3000")
+	log.Fatal(router.Listen(getPort()))
 }
