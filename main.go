@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"log"
 	"os"
 )
@@ -20,6 +21,7 @@ func getPort() string {
 func main() {
 	router:= fiber.New()
 
+	router.Use(cors.New())
 
 	//Static
 	router.Static("/", "./client/build/")
