@@ -1,5 +1,6 @@
 package api
 
+import "C"
 import (
 	"encoding/json"
 	"github.com/daemon1024/dokidoki/server/api/utils"
@@ -42,7 +43,7 @@ func CreateRoom(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return nil
+	return ctx.JSON(r)
 }
 
 
