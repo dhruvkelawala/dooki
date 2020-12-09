@@ -72,7 +72,8 @@ func MyRoom(conn *websocket.Conn) {
 		return
 	}
 
-	if err := sider.PublishToChannel(id, r); err != nil {
+	rb, _ := json.Marshal(r)
+	if err := sider.PublishToChannel(id, rb); err != nil {
 		_ = conn.WriteMessage(websocket.CloseMessage, []byte(err.Error()))
 		_ = conn.Close()
 		return
