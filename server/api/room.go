@@ -103,6 +103,41 @@ func MyRoom(conn *websocket.Conn) {
 	_ = sider.PublishToChannel(id, rb)
 }
 
+func ModifyRoomStatus(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+
+	var rsm entities.RoomStatusModifier
+
+	if err := ctx.BodyParser(&rsm); err != nil {
+		return fiber.NewError(fiber.StatusNotAcceptable, er.ErrorParsingBody)
+	}
+
+	if !sider.IsRoomInDb(id) {
+		return fiber.NewError(fiber.StatusBadRequest, er.RoomNotExist)
+	}
+
+	if ok, _ := utils.IsRoomCreator(id, rsm.Member); !ok  {
+		return fiber.NewError(fiber.StatusBadRequest, er.NotRoomCreator)
+	}
+
+	r, err := utils.GetRoom(id)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	r.Status = rsm.Status
+
+	if err := utils.SetRoom(r); err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	if err := sider.PublishToChannel(id, r); err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return nil
+}
+
 func closeSocketWithError(conn *websocket.Conn, err string, errType ...int) {
 	var eType int
 	if len(errType) == 0 {

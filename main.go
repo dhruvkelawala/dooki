@@ -38,6 +38,7 @@ func main() {
 	router.Static("/static/", "./client/build/static/")
 
 	//REST
+	router.Post("/room/:id/modify", api.ModifyRoomStatus)
 	router.Post("/room/create", api.CreateRoom)
 	router.Post("/member/create", api.CreateMember)
 

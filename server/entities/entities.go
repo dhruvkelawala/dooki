@@ -31,6 +31,11 @@ type Member struct {
 	Name string `json:"name"`
 }
 
+type RoomStatusModifier struct {
+	Member Member
+	Status PlayerStatus
+}
+
 func (r Room) ToDb() error {
 	if r.Name == "" || r.ID == "" {
 		return errors.New(er.NameIdUnspecified)

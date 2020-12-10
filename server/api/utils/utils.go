@@ -7,13 +7,10 @@ import (
 )
 
 func AddMemberToRoom(roomID string, m entities.Member) (entities.Room, error) {
-	res, err := sider.GetDataJson(roomID)
+	r, err := GetRoom(roomID)
 	if err != nil {
 		return entities.Room{}, err
 	}
-
-	var r entities.Room
-	_ = json.Unmarshal(res, &r)
 
 	r.Members = append(r.Members, m)
 	rB, _  := json.Marshal(r)
@@ -25,13 +22,10 @@ func AddMemberToRoom(roomID string, m entities.Member) (entities.Room, error) {
 }
 
 func RemoveMemberFromRoom(roomID string, memberID string) (entities.Room, error) {
-	res, err := sider.GetDataJson(roomID)
+	r, err := GetRoom(roomID)
 	if err != nil {
 		return entities.Room{}, err
 	}
-
-	var r entities.Room
-	_ = json.Unmarshal(res, &r)
 
 	//Empty a slice
 	var mList []entities.Member
@@ -49,4 +43,38 @@ func RemoveMemberFromRoom(roomID string, memberID string) (entities.Room, error)
 	}
 
 	return r, nil
+}
+
+func IsRoomCreator(roomID string, m entities.Member) (bool, error) {
+	r, err := GetRoom(roomID)
+	if err != nil {
+		return false, err
+	}
+
+	if r.CreatedBy.ID == m.ID {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func GetRoom(roomID string) (entities.Room, error) {
+	res, err := sider.GetDataJson(roomID)
+	if err != nil {
+		return entities.Room{}, err
+	}
+
+	var r entities.Room
+	_ = json.Unmarshal(res, &r)
+
+	return r, nil
+}
+
+func SetRoom(room entities.Room)  error {
+	rB, _  := json.Marshal(room)
+	if err := sider.SetData(room.ID, rB, 0); err != nil {
+		return  err
+	}
+
+	return nil
 }
