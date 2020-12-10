@@ -2,21 +2,19 @@ package api
 
 import (
 	"github.com/daemon1024/dokidoki/server/entities"
+	er "github.com/daemon1024/dokidoki/server/errors"
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 )
 
 func CreateMember(ctx *fiber.Ctx) error {
 	name := ctx.FormValue("name", "")
 	if name == "" {
-		return fiber.NewError(fiber.StatusNotAcceptable, "name not specified")
+		return fiber.NewError(fiber.StatusNotAcceptable, er.NameIdUnspecified)
 	}
 
-	id, _ := uuid.NewRandom()
-	m := entities.Member{
-		ID: id.String(),
-		Name: name,
+	m, err := entities.GenerateMember(name)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, er.ErrGenStruct)
 	}
-
 	return ctx.JSON(m)
 }

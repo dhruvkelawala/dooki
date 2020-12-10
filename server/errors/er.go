@@ -10,4 +10,5 @@ const (
 	RoomNotExist = "Specified Room doesn't exist"
 	ErrorParsingBody = "Error parsing json body"
 	NotRoomCreator = "member is not the room's creator, ciao!"
+	ErrGenStruct = "Error generating said struct"
 )
