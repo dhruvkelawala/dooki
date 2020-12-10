@@ -38,6 +38,7 @@ func main() {
 	router.Static("/static/", "./client/build/static/")
 
 	router.Post("/room/create", api.CreateRoom)
+	router.Post("/member/create", api.CreateMember)
 	router.Get("/ws/room/:id", websocket.New(api.MyRoom))
 	router.Get("/api/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
