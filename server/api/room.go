@@ -142,9 +142,11 @@ func closeSocketWithError(conn *websocket.Conn, err string, errType ...int) {
 	var eType int
 	if len(errType) == 0 {
 		eType = websocket.CloseInternalServerErr
+	} else {
+		eType = errType[0]
 	}
 
-	eType = errType[0]
+
 
 	_ = conn.WriteMessage(eType, []byte(err))
 	_ = conn.Close()
