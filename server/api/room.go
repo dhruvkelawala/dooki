@@ -17,21 +17,9 @@ import (
 func CreateRoom(ctx *fiber.Ctx) error {
 	name := ctx.FormValue("name", "doki's room")
 
-	//Expecting a base64 encode of Member JSON
-	creator := ctx.FormValue("creator", "")
-
-	if creator == "" {
-		return fiber.NewError(fiber.StatusNotAcceptable, er.CreatorFormKeyNotFound)
-	}
-
-	cB, err := base64.StdEncoding.DecodeString(creator)
-	if err != nil {
-		return fiber.NewError(fiber.StatusNotAcceptable, er.CreatorFormKeyInvalid)
-	}
-
-	var m entities.Member
-	if err := json.Unmarshal(cB, &m); err != nil {
-		return fiber.NewError(fiber.StatusNotAcceptable, er.CreatorFormKeyInvalid)
+	var creator entities.Member
+	if err := ctx.BodyParser(&creator); err != nil {
+		return fiber.NewError(fiber.StatusNotAcceptable, er.ErrorParsingBody)
 	}
 
 	id, err := uuid.NewRandom()
@@ -42,9 +30,9 @@ func CreateRoom(ctx *fiber.Ctx) error {
 	r := entities.Room{
 		ID:        id.String(),
 		Name:      name,
-		CreatedBy: m,
+		CreatedBy: creator,
 		Status:    entities.PlayerStatus{},
-		Members:   []entities.Member{m},
+		Members:   []entities.Member{creator},
 	}
 
 	if err := r.ToDb(); err != nil {

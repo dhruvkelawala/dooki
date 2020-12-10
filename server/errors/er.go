@@ -8,4 +8,5 @@ const (
 	DatabaseAddFailed = "Failed to add to database, try again!"
 	MemberCookieNotFoundInvalid = "Cookie : member invalid or not found"
 	RoomNotExist = "Specified Room doesn't exist"
+	ErrorParsingBody = "Error parsing json body"
 )
