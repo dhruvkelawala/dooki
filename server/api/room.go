@@ -32,7 +32,7 @@ func CreateRoom(ctx *fiber.Ctx) error {
 		Name:      name,
 		CreatedBy: creator,
 		Status:    entities.PlayerStatus{},
-		Members:   []entities.Member{creator},
+		Members:   []entities.Member{},
 	}
 
 	if err := r.ToDb(); err != nil {
