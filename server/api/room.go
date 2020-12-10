@@ -81,7 +81,22 @@ func MyRoom(conn *websocket.Conn) {
 
 	sub := sider.SubscribeToChannel(id)
 
-	broadcastToClient(sub, conn)
+	go broadcastToClient(sub.Channel(), conn)
+
+	for {
+		if _, _, err := conn.ReadMessage(); err != nil {
+			r, err = utils.RemoveMemberFromRoom(id, member.ID)
+			if err != nil {
+				_ = conn.Close()
+				return
+			}
+			break
+		}
+	}
+
+	_ = sider.UnsubscribeChannel(sub, id)
+	rb, _ = json.Marshal(r)
+	_ = sider.PublishToChannel(id, rb)
 }
 
 func broadcastToClient(channel <-chan *redis.Message, conn *websocket.Conn) {

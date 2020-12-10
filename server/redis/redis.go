@@ -56,6 +56,14 @@ func PublishToChannel(channel string, message interface{}) error {
 	return rc.Publish(c, channel, message).Err()
 }
 
-func SubscribeToChannel(channel string) <-chan *redis.Message{
-	return rc.Subscribe(c, channel).Channel()
+func SubscribeToChannel(channel string) *redis.PubSub {
+	return rc.Subscribe(c, channel)
+}
+
+func UnsubscribeChannel(sub *redis.PubSub, channel string) error {
+	if err := sub.Unsubscribe(c, channel); err != nil {
+		return err
+	}
+
+	return nil
 }
