@@ -67,36 +67,31 @@ func MyRoom(conn *websocket.Conn) {
 
 	mB, err := base64.StdEncoding.DecodeString(mCookies)
 	if err != nil {
-		_ = conn.WriteMessage(websocket.CloseInternalServerErr, []byte(er.MemberCookieNotFoundInvalid))
-		_ = conn.Close()
+		closeSocketWithError(conn, er.MemberCookieNotFoundInvalid)
 		return
 	}
 
 	var m entities.Member
 	if err := json.Unmarshal(mB, &m); err != nil {
-		_ = conn.WriteMessage(websocket.CloseInternalServerErr, []byte(er.MemberCookieNotFoundInvalid))
-		_ = conn.Close()
+		closeSocketWithError(conn, er.MemberCookieNotFoundInvalid)
 		return
 	}
 
 
 	if !sider.IsRoomInDb(id) {
-		_ = conn.WriteMessage(websocket.CloseMessage, []byte(er.RoomNotExist))
-		_ = conn.Close()
+		closeSocketWithError(conn, er.RoomNotExist)
 		return
 	}
 
 	r, err := utils.AddMemberToRoom(id, m)
 	if err != nil {
-		_ = conn.WriteMessage(websocket.CloseMessage, []byte(err.Error()))
-		_ = conn.Close()
+		closeSocketWithError(conn, err.Error())
 		return
 	}
 
 	rb, _ := json.Marshal(r)
 	if err := sider.PublishToChannel(id, rb); err != nil {
-		_ = conn.WriteMessage(websocket.CloseMessage, []byte(err.Error()))
-		_ = conn.Close()
+		closeSocketWithError(conn, err.Error())
 		return
 	}
 
@@ -118,6 +113,18 @@ func MyRoom(conn *websocket.Conn) {
 	_ = sider.UnsubscribeChannel(sub, id)
 	rb, _ = json.Marshal(r)
 	_ = sider.PublishToChannel(id, rb)
+}
+
+func closeSocketWithError(conn *websocket.Conn, err string, errType ...int) {
+	var eType int
+	if len(errType) == 0 {
+		eType = websocket.CloseInternalServerErr
+	}
+
+	eType = errType[0]
+
+	_ = conn.WriteMessage(eType, []byte(err))
+	_ = conn.Close()
 }
 
 func broadcastToClient(channel <-chan *redis.Message, conn *websocket.Conn) {
