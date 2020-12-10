@@ -23,8 +23,8 @@ func getPort() string {
 func main() {
 	router:= fiber.New()
 
+	//Middleware
 	router.Use(cors.New())
-
 	router.Use("/ws", func(ctx *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(ctx) {
 			return ctx.Next()
@@ -37,12 +37,12 @@ func main() {
 	router.Static("/", "./client/build/")
 	router.Static("/static/", "./client/build/static/")
 
+	//REST
 	router.Post("/room/create", api.CreateRoom)
 	router.Post("/member/create", api.CreateMember)
+
+	//Websocket
 	router.Get("/ws/room/:id", websocket.New(api.MyRoom))
-	router.Get("/api/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
 
 	log.Fatal(router.Listen(getPort()))
 }
