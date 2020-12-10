@@ -2,6 +2,8 @@ module github.com/tokidooki/dooki
 
 go 1.15
 
+// +heroku goVersion go1.15
+
 require (
 	github.com/go-redis/redis/v8 v8.4.2
 	github.com/gofiber/fiber/v2 v2.2.4
