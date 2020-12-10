@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/daemon1024/dokidoki/server/api/utils"
 	"github.com/daemon1024/dokidoki/server/entities"
+	er "github.com/daemon1024/dokidoki/server/errors"
 	sider "github.com/daemon1024/dokidoki/server/redis"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
@@ -20,22 +21,22 @@ func CreateRoom(ctx *fiber.Ctx) error {
 	creator := ctx.FormValue("creator", "")
 
 	if creator == "" {
-		return fiber.NewError(fiber.StatusNotAcceptable, "FormKey creator not found")
+		return fiber.NewError(fiber.StatusNotAcceptable, er.CreatorFormKeyNotFound)
 	}
 
 	cB, err := base64.StdEncoding.DecodeString(creator)
 	if err != nil {
-		return fiber.NewError(fiber.StatusNotAcceptable, "FormKey creator invalid")
+		return fiber.NewError(fiber.StatusNotAcceptable, er.CreatorFormKeyInvalid)
 	}
 
 	var m entities.Member
 	if err := json.Unmarshal(cB, &m); err != nil {
-		return fiber.NewError(fiber.StatusNotAcceptable, "FormKey creator invalid")
+		return fiber.NewError(fiber.StatusNotAcceptable, er.CreatorFormKeyInvalid)
 	}
 
 	id, err := uuid.NewRandom()
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "UUID fail")
+		return fiber.NewError(fiber.StatusInternalServerError, er.GenUUIDFail)
 	}
 
 	r := entities.Room{
@@ -47,7 +48,7 @@ func CreateRoom(ctx *fiber.Ctx) error {
 	}
 
 	if err := r.ToDb(); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "Failed to add to database")
+		return fiber.NewError(fiber.StatusInternalServerError, er.DatabaseAddFailed)
 	}
 
 	if err := sider.PublishToChannel(id.String(), "Room Created"); err != nil {
@@ -66,21 +67,21 @@ func MyRoom(conn *websocket.Conn) {
 
 	mB, err := base64.StdEncoding.DecodeString(mCookies)
 	if err != nil {
-		_ = conn.WriteMessage(websocket.CloseInternalServerErr, []byte("Cookie : member invalid"))
+		_ = conn.WriteMessage(websocket.CloseInternalServerErr, []byte(er.MemberCookieNotFoundInvalid))
 		_ = conn.Close()
 		return
 	}
 
 	var m entities.Member
 	if err := json.Unmarshal(mB, &m); err != nil {
-		_ = conn.WriteMessage(websocket.CloseInternalServerErr, []byte("Cookie : member invalid"))
+		_ = conn.WriteMessage(websocket.CloseInternalServerErr, []byte(er.MemberCookieNotFoundInvalid))
 		_ = conn.Close()
 		return
 	}
 
 
 	if !sider.IsRoomInDb(id) {
-		_ = conn.WriteMessage(websocket.CloseMessage, []byte("ROOM DOESN'T EXIST"))
+		_ = conn.WriteMessage(websocket.CloseMessage, []byte(er.RoomNotExist))
 		_ = conn.Close()
 		return
 	}
