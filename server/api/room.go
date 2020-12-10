@@ -131,7 +131,8 @@ func ModifyRoomStatus(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	if err := sider.PublishToChannel(id, r); err != nil {
+	rb, _ := json.Marshal(r)
+	if err := sider.PublishToChannel(id, rb); err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
