@@ -4,14 +4,14 @@ import "C"
 import (
 	"encoding/base64"
 	"encoding/json"
-	"github.com/daemon1024/dokidoki/server/api/utils"
-	"github.com/daemon1024/dokidoki/server/entities"
-	er "github.com/daemon1024/dokidoki/server/errors"
-	sider "github.com/daemon1024/dokidoki/server/redis"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 	"github.com/google/uuid"
+	"github.com/tokidooki/dooki/server/api/utils"
+	"github.com/tokidooki/dooki/server/entities"
+	er "github.com/tokidooki/dooki/server/errors"
+	sider "github.com/tokidooki/dooki/server/redis"
 )
 
 func CreateRoom(ctx *fiber.Ctx) error {

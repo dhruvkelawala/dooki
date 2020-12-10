@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/daemon1024/dokidoki/server/api"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/websocket/v2"
+	"github.com/tokidooki/dooki/server/api"
 	"log"
 	"os"
 )

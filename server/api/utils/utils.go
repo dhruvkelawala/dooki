@@ -2,8 +2,8 @@ package utils
 
 import (
 	"encoding/json"
-	"github.com/daemon1024/dokidoki/server/entities"
-	sider "github.com/daemon1024/dokidoki/server/redis"
+	"github.com/tokidooki/dooki/server/entities"
+	sider "github.com/tokidooki/dooki/server/redis"
 )
 
 func AddMemberToRoom(roomID string, m entities.Member) (entities.Room, error) {

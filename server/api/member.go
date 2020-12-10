@@ -1,9 +1,9 @@
 package api
 
 import (
-	"github.com/daemon1024/dokidoki/server/entities"
-	er "github.com/daemon1024/dokidoki/server/errors"
 	"github.com/gofiber/fiber/v2"
+	"github.com/tokidooki/dooki/server/entities"
+	er "github.com/tokidooki/dooki/server/errors"
 )
 
 func CreateMember(ctx *fiber.Ctx) error {

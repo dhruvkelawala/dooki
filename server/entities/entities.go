@@ -3,9 +3,9 @@ package entities
 import (
 	"encoding/json"
 	"errors"
-	er "github.com/daemon1024/dokidoki/server/errors"
-	sider "github.com/daemon1024/dokidoki/server/redis"
 	uuid2 "github.com/google/uuid"
+	er "github.com/tokidooki/dooki/server/errors"
+	sider "github.com/tokidooki/dooki/server/redis"
 	"time"
 )
 
